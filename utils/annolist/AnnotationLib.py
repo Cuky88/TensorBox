@@ -84,10 +84,10 @@ class AnnoList(MutableSequence):
         elif dtype == str:
             _adesc.dtype = AnnoList.TYPE_STRING;
         else:
-            print "unknown attribute type: ", dtype
+            print ("unknown attribute type: ", dtype)
             assert(False);
     
-        #print "adding attribute: {}, id: {}, type: {}".format(_adesc.name, _adesc.id, _adesc.dtype);
+        #print ("adding attribute: {}, id: {}, type: {}".format(_adesc.name, _adesc.id, _adesc.dtype))
         self.attribute_desc[name] = _adesc;
 
     def add_attribute_val(self, aname, vname, val):
@@ -248,11 +248,11 @@ class AnnoRect(object):
         self.y2 = min(max_y, self.y2)
 
     def printContent(self):
-        print "Coords: ", self.x1, self.y1, self.x2, self.y2
-        print "Score: ", self.score
-        print "Articulations: ", self.articulations
-        print "Viewpoints: ", self.viewpoints
-        print "Silhouette: ", self.silhouetteID
+        print ("Coords: ", self.x1, self.y1, self.x2, self.y2)
+        print ("Score: ", self.score)
+        print ("Articulations: ", self.articulations)
+        print ("Viewpoints: ", self.viewpoints)
+        print ("Silhouette: ", self.silhouetteID)
 
     def ascii(self):
         r = "("+str(self.x1)+", "+str(self.y1)+", "+str(self.x2)+", "+str(self.y2)+")"
@@ -377,8 +377,8 @@ class AnnoRect(object):
         dist = self.distance(other, aspectRatio, fixWH)
 
         #if(self.width() == 24 ):
-        #print cover, " ", overlap, " ", dist
-        #print coverThresh, overlapThresh, distThresh
+        #print (cover, " ", overlap, " ", dist)
+        #print (coverThresh, overlapThresh, distThresh)
         #print (cover>=coverThresh and overlap>=overlapThresh and dist<=distThresh)
         
         if (cover>=coverThresh and overlap>=overlapThresh and dist<=distThresh and self.classID == other.classID):
@@ -492,7 +492,7 @@ class Annotation(object):
         return os.path.join(self.imagePath, self.imageName)
 
     def printContent(self):
-        print "Name: ", self.imageName
+        print ("Name: ", self.imageName)
         for rect in self.rects:
             rect.printContent()
 
@@ -603,7 +603,7 @@ def parseTii(filename):
                     rect.x2 = float(aNode.firstChild.data)
                     aNode = vehicle.getAttributeNode( orientation+"_BottomRight_Y")
                     rect.y2 = float(aNode.firstChild.data)
-                    print "pedestrian:", anno.imageName, rect.x1, rect.y1, rect.x2, rect.y2
+                    print ("pedestrian:", anno.imageName, rect.x1, rect.y1, rect.x2, rect.y2)
                     anno.rects.append(rect)
 
         annotations.append(anno)
@@ -676,12 +676,12 @@ def parseXML(filename):
             for articulation in annoRect.getElementsByTagName("articulation"):
                 for id in articulation.getElementsByTagName("id"):
                     rect.articulations.append(int(id.firstChild.data))
-                #print "Articulations: ", rect.articulations
+                #print ("Articulations: ", rect.articulations)
 
             for viewpoint in annoRect.getElementsByTagName("viewpoint"):
                 for id in viewpoint.getElementsByTagName("id"):
                     rect.viewpoints.append(int(id.firstChild.data))
-                    #print "Viewpoints: ", rect.viewpoints
+                    #print ("Viewpoints: ", rect.viewpoints)
                     
             for d in annoRect.getElementsByTagName("D3"):
                 for id in d.getElementsByTagName("id"):
@@ -690,7 +690,7 @@ def parseXML(filename):
             for silhouette in annoRect.getElementsByTagName("silhouette"):
                 for id in silhouette.getElementsByTagName("id"):
                     rect.silhouetteID = int(id.firstChild.data)
-                #print "SilhouetteID: ", rect.silhouetteID
+                #print ("SilhouetteID: ", rect.silhouetteID)
 
             for annoPoints in annoRect.getElementsByTagName("annopoints"):                          
                 for annoPoint in annoPoints.getElementsByTagName("point"):
@@ -747,7 +747,7 @@ def parseJSON(filename):
     return annotations
     
 def parse(filename, abs_path=False):
-    #print "Parsing: ", filename
+    #print ("Parsing: ", filename)
     name, ext = os.path.splitext(filename)
     
     if (ext == ".gz" or ext == ".bz2"):
@@ -802,14 +802,14 @@ def parseIDL(filename):
         if (line[-1]=='\n'):
             line = line[:-1]; # remove '\n'
         lineLen = len(line)
-        #print line
+        #print (line)
 
         ### get image name
         posImageEnd = line.find('\":')
         if (posImageEnd==-1):
             posImageEnd = line.rfind("\"")
         anno.imageName = line[1:posImageEnd]
-        #print anno.imageName
+        #print (anno.imageName)
 
         pos = anno.imageName.rfind("@")
         if (pos >= 0):
@@ -829,22 +829,22 @@ def parseIDL(filename):
 
             segments = line.split(',')
             if (len(segments)%4!=0):
-                print "Parse Errror"
+                print ("Parse Errror")
             else:
                 for i in range(0,len(segments),4):
                     rectSeg = segments[i]+","+segments[i+1]+","+segments[i+2]+","+segments[i+3]
                     rectSegs.append(rectSeg)
-                    #print rectSegs
+                    #print (rectSegs)
 
             ## parse rect segments
             for rectSeg in rectSegs:
-                #print "RectSeg: ", rectSeg
+                #print ("RectSeg: ", rectSeg)
                 rect = AnnoRect()
                 posBracket1 = rectSeg.find('(')
                 posBracket2 = rectSeg.find(')')
                 coordinates = rectSeg[posBracket1+1:posBracket2].split(',')
-                #print coordinates
-                #print "Coordinates: ",coordinates                              
+                #print (coordinates)
+                #print ("Coordinates: ",coordinates
                 rect.x1 = float(round(float(coordinates[0].strip())))
                 rect.y1 = float(round(float(coordinates[1].strip())))
                 rect.x2 = float(round(float(coordinates[2].strip())))
@@ -856,7 +856,7 @@ def parseIDL(filename):
                 else:
                     rectSeg+="\n"
                 if (posColon!=-1):
-                    #print rectSeg[posColon+1:posSlash]
+                    #print (rectSeg[posColon+1:posSlash])
                     rect.score = float(rectSeg[posColon+1:posSlash])
                 anno.rects.append(rect)
 
@@ -872,7 +872,7 @@ def parseIDL(filename):
 ### Saving
 
 def save(filename, annotations):
-    print "saving: ", filename;
+    print ("saving: ", filename)
 
     name, ext = os.path.splitext(filename)
 
@@ -969,7 +969,7 @@ def saveXML(filename, annotations):
     elif(ext == ".bz2"):
         writer = bz2.BZ2File(filename, 'w')
     else:
-        print "invalid filename - .al(.gz|.bz2) is accepted"
+        print ("invalid filename - .al(.gz|.bz2) is accepted")
         return
 
 
@@ -1007,12 +1007,12 @@ def getStats(annotations):
                 noSmall=noSmall+1
             heights.append(rect.height())
             if (rect.width()==0):
-                print "Warning: width=0 in image ", anno.imageName
+                print ("Warning: width=0 in image ", anno.imageName)
                 widths.append(1)
             else:
                 widths.append(rect.width())
                 if (float(rect.height())/float(rect.width())<1.5):
-                    print "Degenerated pedestrian annotation: ", anno.imageName
+                    print ("Degenerated pedestrian annotation: ", anno.imageName)
 
     ###--- compute average height and variance ---###
     avgHeight = 0
@@ -1053,13 +1053,13 @@ def getStats(annotations):
         varWidth=float(varWidth)/float(no-1)
 
     ###--- write statistics ---###
-    print "  Total # rects:", no
-    print "     avg. Width:", avgWidth, " (", sqrt(varWidth), "standard deviation )"
-    print "    avg. Height:", avgHeight, " (", sqrt(varHeight), "standard deviation )"
-    print "     tiny rects:", noTiny, " (< 36 pixels)"
-    print "    small rects:", noSmall, " (< 128 pixels)"
-    print "    minimum height:", minHeight
-    print "    maximum height:", maxHeight
+    print ("  Total # rects:", no)
+    print ("     avg. Width:", avgWidth, " (", sqrt(varWidth), "standard deviation )")
+    print ("    avg. Height:", avgHeight, " (", sqrt(varHeight), "standard deviation )")
+    print ("     tiny rects:", noTiny, " (< 36 pixels)")
+    print ("    small rects:", noSmall, " (< 128 pixels)")
+    print ("    minimum height:", minHeight)
+    print ("    maximum height:", maxHeight)
 
     ###--- return ---###
     return [widths, heights]
@@ -1163,7 +1163,7 @@ def extractSubSet(gtIDL, detIDL):
                 break
 
         if(not imageFound):
-            print "Image not found " + gtAnno.imageName + " !"
+            print ("Image not found " + gtAnno.imageName + " !")
             missingRecallIDL.append(gtAnno)
             filteredIDL.append(filteredAnno)
             continue
