@@ -1,8 +1,8 @@
 import sys
 #import AnnoList_pb2
-import AnnotationLib;
+from .AnnotationLib import *
 
-from ma_utils import is_number;
+from .ma_utils import is_number;
 
 def loadPal(filename):
     _annolist = AnnoList_pb2.AnnoList();

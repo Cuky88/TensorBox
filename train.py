@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+import sys
+sys.path += 'TensorBox/'
+
 import json
 import cv2
 import tensorflow.contrib.slim as slim
