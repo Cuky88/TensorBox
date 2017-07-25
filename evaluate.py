@@ -1,3 +1,6 @@
+# python evaluate.py --weights data/overfeat_rezoom/save.ckpt-150000 --test_boxes data/brainwash/val_boxes.json
+
+
 import tensorflow as tf
 import os
 import json
@@ -75,7 +78,7 @@ def main():
     parser.add_argument('--show_suppressed', default=True, type=bool)
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
-    hypes_file = '%s/hypes.json' % os.path.dirname(args.weights)
+    hypes_file = 'hypes/%s' % args.weights.split("/")[1]+".json"
     with open(hypes_file, 'r') as f:
         H = json.load(f)
     expname = args.expname + '_' if args.expname else ''
@@ -88,13 +91,13 @@ def main():
     true_annolist.save(true_boxes)
 
     try:
-        rpc_cmd = './utils/annolist/doRPC.py --minOverlap %f %s %s' % (args.iou_threshold, true_boxes, pred_boxes)
+        rpc_cmd = 'cd utils/annolist/; ./doRPC.py --minOverlap %f %s %s; cd ../../' % (args.iou_threshold, '../../'+true_boxes, '../../'+pred_boxes)
         print('$ %s' % rpc_cmd)
         rpc_output = subprocess.check_output(rpc_cmd, shell=True)
         print(rpc_output)
         txt_file = [line for line in rpc_output.split('\n') if line.strip()][-1]
         output_png = '%s/results.png' % get_image_dir(args)
-        plot_cmd = './utils/annolist/plotSimple.py %s --output %s' % (txt_file, output_png)
+        plot_cmd = 'cd utils/annolist/;./plotSimple.py %s --output %s; cd ../../' % (txt_file, '../../'+output_png)
         print('$ %s' % plot_cmd)
         plot_output = subprocess.check_output(plot_cmd, shell=True)
         print('output results at: %s' % plot_output)

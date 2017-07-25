@@ -8,6 +8,7 @@ containing a list of images and the bounding boxes in each image.
 The basic model implements the simple and robust GoogLeNet-OverFeat algorithm with attention.
 
 ## OverFeat Installation & Training
+You need Python 2.7, run with env cv3_py2!
 First, [install TensorFlow from source or pip](https://www.tensorflow.org/versions/r0.11/get_started/os_setup.html#pip-installation) (NB: source installs currently break threading on 0.11)
     
     $ git clone http://github.com/russell91/tensorbox

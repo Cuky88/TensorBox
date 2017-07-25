@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 from pylab import *
 import numpy as np
+import math
 
 class MatPlotter:
     fontsize=15

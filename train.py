@@ -1,4 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env
+
+# python train.py --hypes hypes/overfeat_resnet_rezoom.json --gpu 0 --logdir output
+# Use environment cv3_py2 with python 2.7
+
 import sys
 sys.path += 'TensorBox/'
 
@@ -405,6 +409,8 @@ def train(H, test_images):
     enqueue_op = {}
     for phase in ['train', 'test']:
         dtypes = [tf.float32, tf.float32, tf.float32]
+
+        # TODO: What is grid size? Size of sliding window?!
         grid_size = H['grid_width'] * H['grid_height']
         shapes = (
             [H['image_height'], H['image_width'], 3],
@@ -414,6 +420,7 @@ def train(H, test_images):
         q[phase] = tf.FIFOQueue(capacity=30, dtypes=dtypes, shapes=shapes)
         enqueue_op[phase] = q[phase].enqueue((x_in, confs_in, boxes_in))
 
+    # Eingabe der Inputparameter
     def make_feed(d):
         return {x_in: d['image'], confs_in: d['confs'], boxes_in: d['boxes'],
                 learning_rate: H['solver']['learning_rate']}
@@ -422,9 +429,11 @@ def train(H, test_images):
         for d in gen:
             sess.run(enqueue_op[phase], feed_dict=make_feed(d))
 
+    # Building graph
     (config, loss, accuracy, summary_op, train_op,
      smooth_op, global_step, learning_rate) = build(H, q)
 
+    # TODO: Summary writer, extend to visualize kernel states
     saver = tf.train.Saver(max_to_keep=None)
     writer = tf.summary.FileWriter(
         logdir=H['save_dir'],
@@ -436,7 +445,7 @@ def train(H, test_images):
         for phase in ['train', 'test']:
             # enqueue once manually to avoid thread start delay
             gen = train_utils.load_data_gen(H, phase, jitter=H['solver']['use_jitter'])
-            d = gen.next()
+            d = next(gen)
             sess.run(enqueue_op[phase], feed_dict=make_feed(d))
             t = threading.Thread(target=thread_loop,
                                  args=(sess, enqueue_op, phase, gen))
