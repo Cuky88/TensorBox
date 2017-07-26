@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import json
+import time
 import os
 import cv2
 import itertools
@@ -16,10 +17,13 @@ def rescale_boxes(current_shape, anno, target_height, target_width):
     x_scale = target_width / float(current_shape[1])
     y_scale = target_height / float(current_shape[0])
     for r in anno.rects:
-        assert r.x1 < r.x2 # one of the annotations has negative width!
+        print("\n" + anno.imageName)
+        print("x(%s, %s)-" % (r.x1, r.x2))
+        assert r.x1 <= r.x2 # one of the annotations has negative width!
         r.x1 *= x_scale
         r.x2 *= x_scale
-        assert r.y1 < r.y2 # one of the annotations has negative height!
+        print("y(%s, %s)"%(r.y1, r.y2))
+        assert r.y1 <= r.y2 # one of the annotations has negative height!
         r.y1 *= y_scale
         r.y2 *= y_scale
     return anno
@@ -32,10 +36,14 @@ def load_idl_tf(idlfile, H, jitter):
     annolist = al.parse(idlfile)
     annos = []
     for anno in annolist:
+        if anno.imageName =="train/00067_8040.jpg":
+            print(anno)
+
         anno.imageName = os.path.join(
             os.path.dirname(os.path.realpath(idlfile)), anno.imageName)
         annos.append(anno)
     random.seed(0)
+    time.sleep(5)
     if H['data']['truncate_data']:
         annos = annos[:10]
     for epoch in itertools.count():

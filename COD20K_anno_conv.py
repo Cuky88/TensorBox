@@ -104,17 +104,32 @@ def showBB(img, rects, name):
     plt.imshow(img)
     plt.show()
 
+def checkAnno(check):
+    anno = []
+    with open(check, 'r') as reader:
+        data = json.load(reader)
+        for f in data:
+            anno.append(f)
+
+    for f in anno:
+        for bb in f['rects']:
+            if bb['y1'] >= bb['y2']:
+                print('Error y1 greater-equal y2 in %s'%f['image_path'])
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--phase', default=None, type=str)
     parser.add_argument('--show', default=None, type=int)
+    parser.add_argument('--check', default=None, type=str)
     args = parser.parse_args()
 
     if args.phase is not None and not 'val':
         createJson(args.phase)
     elif args.phase == 'val':
         createVal()
+    elif args.check is not None:
+        checkAnno(args.check)
 
     if args.show is not None:
         with open('data/COD20K/test_boxes.json', 'r') as reader:

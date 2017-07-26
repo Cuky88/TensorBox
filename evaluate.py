@@ -1,4 +1,5 @@
 # python evaluate.py --weights data/overfeat_rezoom/save.ckpt-150000 --test_boxes data/brainwash/val_boxes.json
+# python evaluate.py --weights data/COD20K/save.ckpt-110000 --test_boxes data/COD20K/val_boxes.json
 
 
 import tensorflow as tf
