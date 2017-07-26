@@ -36,7 +36,7 @@ def load_idl_tf(idlfile, H, jitter):
     annolist = al.parse(idlfile)
     annos = []
     for anno in annolist:
-        if anno.imageName =="train/00067_8040.jpg":
+        #if anno.imageName =="train/00067_8040.jpg":
             #print(anno)
 
         anno.imageName = os.path.join(
