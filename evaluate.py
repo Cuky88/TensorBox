@@ -1,5 +1,6 @@
 # python evaluate.py --weights data/overfeat_rezoom/save.ckpt-150000 --test_boxes data/brainwash/val_boxes.json
 # python evaluate.py --weights data/COD20K/save.ckpt-110000 --test_boxes data/COD20K/val_boxes.json
+# python evaluate.py --weights data/BoxCars/save.ckpt-40000 --test_boxes data/BoxCars/val_boxes.json
 
 
 import tensorflow as tf
@@ -52,9 +53,22 @@ def get_results(args, H):
             (np_pred_boxes, np_pred_confidences) = sess.run([pred_boxes, pred_confidences], feed_dict=feed)
             pred_anno = al.Annotation()
             pred_anno.imageName = true_anno.imageName
+            # TODO: try to fix order of x and y in add_rectangles?!
             new_img, rects = add_rectangles(H, [img], np_pred_confidences, np_pred_boxes,
                                             use_stitching=True, rnn_len=H['rnn_len'], min_conf=args.min_conf, tau=args.tau, show_suppressed=args.show_suppressed)
-        
+
+            # TODO: In current state too slowly!
+
+            for r in rects:
+                if r.x1 > r.x2:
+                    r.x1, r.x2 = r.x2, r.x1
+                    print("x swapped")
+                if r.y1 > r.y2:
+                    r.y1, r.y2 = r.y2, r.y1
+                    print("y swapped")
+
+                #print("pred_rect # x1: %s - x2: %s - y1: %s - y2: %s"%(r.x1, r.x2, r.y1, r.y2))
+
             pred_anno.rects = rects
             pred_anno.imagePath = os.path.abspath(data_dir)
             pred_anno = rescale_boxes((H["image_height"], H["image_width"]), pred_anno, orig_img.shape[0], orig_img.shape[1])
@@ -63,7 +77,7 @@ def get_results(args, H):
             imname = '%s/%s' % (image_dir, os.path.basename(true_anno.imageName))
             misc.imsave(imname, new_img)
             if i % 25 == 0:
-                print(i)
+                print(str(i) + " out of " + str(len(true_annolist)))
     return pred_annolist, true_annolist
 
 def main():
