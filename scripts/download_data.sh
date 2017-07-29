@@ -6,7 +6,7 @@ cd $DIR
 
 echo "Downloading..."
 
-mkdir -p data && cd data
+cd .. && mkdir -p data && cd data
 wget --continue http://russellsstewart.com/s/tensorbox/inception_v1.ckpt
 wget --continue http://download.tensorflow.org/models/resnet_v1_101_2016_08_28.tar.gz
 mkdir -p overfeat_rezoom && cd overfeat_rezoom

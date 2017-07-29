@@ -7,10 +7,9 @@ import json
 import subprocess
 from scipy.misc import imread, imresize
 from scipy import misc
-from train import build_forward
-from utils.annolist import AnnotationLib as al
-from utils.train_utils import add_rectangles, rescale_boxes
-
+from ..train import build_forward
+from ..utils.annolist import AnnotationLib as al
+from ..utils.train_utils import add_rectangles, rescale_boxes
 import argparse
 
 def get_image_dir(args):
@@ -84,7 +83,7 @@ def main():
     parser.add_argument('--show_suppressed', default=True, type=bool)
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
-    hypes_file = 'hypes/%s' % args.weights.split("/")[1]+".json"
+    hypes_file = '../hypes/%s' % args.weights.split("/")[1]+".json"
     with open(hypes_file, 'r') as f:
         H = json.load(f)
     expname = args.expname + '_' if args.expname else ''

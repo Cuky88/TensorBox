@@ -15,7 +15,7 @@ def cod20k_read(path, file):
             yield line
 
 def createJson(phase):
-    annodir_train = 'data/COD20K/annotations/' + phase + '/'
+    annodir_train = '../data/COD20K/annotations/' + phase + '/'
     files = [f for f in listdir(annodir_train) if isfile(join(annodir_train, f))]
     i = 0
     j = 0
@@ -42,7 +42,7 @@ def createJson(phase):
     print(i)
     print(j)
 
-    with open('data/COD20K/' + phase + '_boxes.json', 'w') as outfile:
+    with open('../data/COD20K/' + phase + '_boxes.json', 'w') as outfile:
         json.dump(total, outfile, indent=2)
         outfile.write('\n')
 
@@ -57,7 +57,7 @@ def createVal():
     val = []
     filenames = []
 
-    with open('data/COD20K/train_boxes.json', 'r') as reader:
+    with open('../data/COD20K/train_boxes.json', 'r') as reader:
         data = json.load(reader)
         for f in data:
             train.append(f)
@@ -86,12 +86,12 @@ def createVal():
     # except:
     #     print("Unexpected error!")
 
-    with open('data/COD20K/val_boxes.json', 'w') as outfile:
+    with open('../data/COD20K/val_boxes.json', 'w') as outfile:
         json.dump(val, outfile, indent=2)
         outfile.write('\n')
     print(len(val))
 
-    with open('data/COD20K/train_new_boxes.json', 'w') as writer:
+    with open('../data/COD20K/train_new_boxes.json', 'w') as writer:
         json.dump(train_new, writer, indent=2)
         writer.write('\n')
     print(len(train_new))
@@ -132,12 +132,12 @@ def main():
         checkAnno(args.check)
 
     if args.show is not None:
-        with open('data/COD20K/test_boxes.json', 'r') as reader:
+        with open('../data/COD20K/test_boxes.json', 'r') as reader:
             data = json.load(reader)
             for i, img in enumerate(data):
                 if i == args.show:
-                    img_loaded = cv2.imread('data/COD20K/' + img['image_path'])
-                    print('data/COD20K/' + img['image_path'])
+                    img_loaded = cv2.imread('../data/COD20K/' + img['image_path'])
+                    print('../data/COD20K/' + img['image_path'])
                     showBB(img_loaded, img['rects'], img['image_path'])
 
 

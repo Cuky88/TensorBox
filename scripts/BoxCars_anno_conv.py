@@ -4,7 +4,6 @@ import cv2
 import matplotlib.pyplot as plt
 import json
 import argparse
-import numpy as np
 
 def createJson(file):
     train = []
@@ -36,15 +35,15 @@ def createJson(file):
         else:
             val.append(f)
 
-    with open('data/BoxCars/train_boxes.json', 'w') as outfile:
+    with open('../data/BoxCars/train_boxes.json', 'w') as outfile:
         json.dump(train, outfile, indent=2)
         outfile.write('\n')
 
-    with open('data/BoxCars/test_boxes.json', 'w') as outfile:
+    with open('../data/BoxCars/test_boxes.json', 'w') as outfile:
         json.dump(test, outfile, indent=2)
         outfile.write('\n')
 
-    with open('data/BoxCars/val_boxes.json', 'w') as outfile:
+    with open('../data/BoxCars/val_boxes.json', 'w') as outfile:
         json.dump(val, outfile, indent=2)
         outfile.write('\n')
 
@@ -88,12 +87,12 @@ def main():
         print("Error, --file must be set!")
 
     if args.show is not None:
-        with open('data/BoxCars/full_boxes.json', 'r') as reader:
+        with open('../data/BoxCars/full_boxes.json', 'r') as reader:
             data = json.load(reader)
             for i, img in enumerate(data):
                 if i == args.show:
-                    img_loaded = cv2.imread('data/BoxCars/' + img['image_path'])
-                    print('data/BoxCars/' + img['image_path'])
+                    img_loaded = cv2.imread('../data/BoxCars/' + img['image_path'])
+                    print('../data/BoxCars/' + img['image_path'])
                     showBB(img_loaded, img['rects'], img['image_path'])
 
 
