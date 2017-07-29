@@ -14,6 +14,7 @@ First, [install TensorFlow from source or pip](https://www.tensorflow.org/versio
     $ git clone http://github.com/russell91/tensorbox
     $ cd tensorbox
     $ ./download_data.sh
+    $ # start make with env prak_ml!!
     $ cd /path/to/tensorbox/utils && make && make hungarian && cd ..
     $ python train.py --hypes hypes/overfeat_rezoom.json --gpu 0 --logdir output
     $ #see evaluation instructions below

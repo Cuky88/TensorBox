@@ -1,6 +1,6 @@
 import numpy as np
 import random
-import json
+import matplotlib.pyplot as plt
 import time
 import os
 import cv2
@@ -8,9 +8,9 @@ import itertools
 from scipy.misc import imread, imresize
 import tensorflow as tf
 
-from .data_utils import (annotation_jitter, annotation_to_h5)
-from .annolist import AnnotationLib as al
-from .rect import Rect
+from data_utils import (annotation_jitter, annotation_to_h5)
+from annolist import AnnotationLib as al
+from rect import Rect
 from utils import tf_concat
 
 def rescale_boxes(current_shape, anno, target_height, target_width):
@@ -104,7 +104,7 @@ def load_data_gen(H, phase, jitter):
 
         yield output
 
-def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_len=1, min_conf=0.1, show_removed=True, tau=0.25, show_suppressed=True):
+def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_len=1, min_conf=0.1, show_removed=False, tau=0.25, show_suppressed=True):
     image = np.copy(orig_image[0])
     num_cells = H["grid_height"] * H["grid_width"]
     boxes_r = np.reshape(boxes, (-1,
@@ -151,6 +151,16 @@ def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_l
                     (rect.cx+int(rect.width/2), rect.cy+int(rect.height/2)),
                     color,
                     2)
+                # Write bb dimension in image
+                #x1 = rect.cx-int(rect.width/2)
+                #y1 = rect.cy-int(rect.height/2)
+                #x2 = rect.cx+int(rect.width/2)
+                #y2 = rect.cy+int(rect.height/2)
+
+                #font = cv2.FONT_HERSHEY_SIMPLEX
+                #cv2.putText(image, (str(x1) + ' - ' + str(y1) + " | " + str(x2) + ' - ' + str(y2)), (10, 100), font, 1, (255, 255, 255), 2)
+                #plt.imshow(image)
+                #plt.show()
 
     rects = []
     for rect in acc_rects:
@@ -161,6 +171,7 @@ def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_l
         r.y2 = rect.cy + rect.height/2.
         r.score = rect.true_confidence
         rects.append(r)
+        #print("x1: %s - x2: %s - y1: %s - y2: %s" % (r.x1, r.x2, r.y1, r.y2))
 
     return image, rects
 

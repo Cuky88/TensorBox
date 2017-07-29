@@ -728,20 +728,21 @@ def parseJSON(filename):
         anno = Annotation()
         anno.imageName = annotation["image_path"]
 
-        rects = []
-        for annoRect in annotation["rects"]:
-            rect = AnnoRect()
+        if name.split("/")[-1].split("_")[0].strip() not in ["predict"]:
+            rects = []
+            for annoRect in annotation["rects"]:
+                rect = AnnoRect()
 
-            rect.x1 = annoRect["x1"]
-            rect.x2 = annoRect["x2"]
-            rect.y1 = annoRect["y1"]
-            rect.y2 = annoRect["y2"]
-            if "score" in annoRect:
-                rect.score = annoRect["score"]
+                rect.x1 = annoRect["x1"]
+                rect.x2 = annoRect["x2"]
+                rect.y1 = annoRect["y1"]
+                rect.y2 = annoRect["y2"]
+                if "score" in annoRect:
+                    rect.score = annoRect["score"]
 
-            rects.append(rect)
+                rects.append(rect)
 
-        anno.rects = rects
+            anno.rects = rects
         annotations.append(anno)
 
     return annotations
