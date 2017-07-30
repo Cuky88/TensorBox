@@ -131,12 +131,14 @@ def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_l
     if use_stitching:
         from .stitch_wrapper import stitch_rects
         acc_rects = stitch_rects(all_rects, tau)
+        #print("\n###### Use stitching ######\n")
     else:
         acc_rects = all_rects_r
 
 
     if show_suppressed:
         pairs = [(all_rects_r, (255, 0, 0))]
+        #print("\n###### Suppress is TRUE! ######\n")
     else:
         pairs = []
     pairs.append((acc_rects, (0, 255, 0)))
@@ -161,14 +163,15 @@ def add_rectangles(H, orig_image, confidences, boxes, use_stitching=False, rnn_l
 
     rects = []
     for rect in acc_rects:
-        r = al.AnnoRect()
-        r.x1 = rect.cx - rect.width/2.
-        r.x2 = rect.cx + rect.width/2.
-        r.y1 = rect.cy - rect.height/2.
-        r.y2 = rect.cy + rect.height/2.
-        r.score = rect.true_confidence
-        rects.append(r)
-        #print("x1: %s - x2: %s - y1: %s - y2: %s" % (r.x1, r.x2, r.y1, r.y2))
+        if rect.confidence > min_conf:
+            r = al.AnnoRect()
+            r.x1 = rect.cx - rect.width/2.
+            r.x2 = rect.cx + rect.width/2.
+            r.y1 = rect.cy - rect.height/2.
+            r.y2 = rect.cy + rect.height/2.
+            r.score = rect.true_confidence
+            rects.append(r)
+            #print("x1: %s - x2: %s - y1: %s - y2: %s" % (r.x1, r.x2, r.y1, r.y2))
 
     return image, rects
 
