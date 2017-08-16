@@ -1,12 +1,12 @@
 {
-    "data": {
-        "train_idl": "./data/ownset/train_boxes.json",
-        "test_idl": "./data/ownset/predict_boxes.json",
+"data": {
+        "train_idl": "./data/gtav/train_boxes.json",
+        "test_idl": "./data/gtav/val_boxes.json",
         "truncate_data": false
     },
     "logging": {
-        "display_iter": 50,
-        "save_iter": 10000
+        "display_iter": 1000,
+        "save_iter": 20000
     },
     "solver": {
         "opt": "RMS",
@@ -21,33 +21,31 @@
         "max_iter": 500000
     },
     "use_lstm": false,
-    "use_rezoom": false,
+    "use_rezoom": true,
     "biggest_box_px": 10000,
     "rezoom_change_loss": "iou",
     "rezoom_w_coords": [-0.25, 0.25],
     "rezoom_h_coords": [-0.25, 0.25],
-    "reregress": false,
+    "reregress": true,
     "focus_size": 1.8,
     "early_feat_channels": 256,
     "later_feat_channels": 832,
-    "avg_pool_size": 8,
+    "avg_pool_size": 5,
     "slim_top_lname": "Mixed_5b",
     "slim_attention_lname": "Mixed_3b",
     "slim_basename": "InceptionV1",
     "slim_ckpt": "inception_v1.ckpt",
     "num_lstm_layers": 2,
-    "image_width": 448,
-    "image_height": 224,
-    "grid_height": 7,
-    "grid_width": 14,
-    "batch_size": 1,
+    "image_width": 864, 
+    "image_height": 640,
+    "grid_height": 20, 
+    "grid_width": 27,
+    "batch_size": 1, 
     "region_size": 32,
     "clip_norm": 1.0,
     "lstm_size": 500,
     "deconv": false,
     "num_classes": 2,
-    "rnn_len": 1,
-    "min_conf": 0.8,
-    "tau": 0.2,
-    "show_suppressed": false
+    "rnn_len": 1
 }
+
