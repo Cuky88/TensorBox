@@ -1,5 +1,8 @@
 from .slim_nets import inception_v1 as inception
+from .slim_nets import inception_v4 as inception4
 from .slim_nets import resnet_v1 as resnet
+from .slim_nets import overfeat
+from .slim_nets import vgg
 import tensorflow.contrib.slim as slim
 
 def model(x, H, reuse, is_training=True):
@@ -16,6 +19,29 @@ def model(x, H, reuse, is_training=True):
                                           num_classes=1001,
                                           spatial_squeeze=False,
                                           reuse=reuse)
+    elif H['slim_basename'] == 'overfeat':
+        with slim.arg_scope(overfeat.overfeat_arg_scope()):
+            _, T = overfeat.overfeat(x,
+                                        is_training=is_training,
+                                        num_classes=1001,
+                                        spatial_squeeze=True,
+                                        dropout_keep_prob = 0.5
+                                     )
+    elif H['slim_basename'] == 'vgg19':
+        with slim.arg_scope(vgg.vgg_arg_scope()):
+            _, T = vgg.vgg_19(x,
+                                is_training=is_training,
+                                num_classes=1001,
+                                spatial_squeeze=True,
+                                dropout_keep_prob=0.5
+                                )
+    elif H['slim_basename'] == 'inceptionV4':
+        with slim.arg_scope(inception4.inception_v4_arg_scope()):
+            _, T = inception4.inception_v4(x,
+                                            is_training=is_training,
+                                            num_classes=1001,
+                                            reuse=reuse
+                                            )
     #print '\n'.join(map(str, [(k, v.op.outputs[0].get_shape()) for k, v in T.iteritems()]))
 
     coarse_feat = T[H['slim_top_lname']][:, :, :, :H['later_feat_channels']]
