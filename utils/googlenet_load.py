@@ -32,7 +32,7 @@ def model(x, H, reuse, is_training=True):
             _, T = vgg.vgg_19(x,
                                 is_training=is_training,
                                 num_classes=1001,
-                                spatial_squeeze=True,
+                                spatial_squeeze=False,
                                 dropout_keep_prob=0.5
                                 )
     elif H['slim_basename'] == 'inceptionV4':
@@ -45,6 +45,7 @@ def model(x, H, reuse, is_training=True):
     #print '\n'.join(map(str, [(k, v.op.outputs[0].get_shape()) for k, v in T.iteritems()]))
 
     coarse_feat = T[H['slim_top_lname']][:, :, :, :H['later_feat_channels']]
+    print(coarse_feat.op.outputs[0].get_shape()[3], H['later_feat_channels'])
     assert coarse_feat.op.outputs[0].get_shape()[3] == H['later_feat_channels']
 
     # fine feat can be used to reinspect input
