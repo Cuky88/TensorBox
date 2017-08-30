@@ -53,17 +53,21 @@ def get_results(args, H):
                 else:
                     print("Size was less than 0")
 
-        filterSize = sizes[int(0.1 * (len(sizes) - 1)];
+        sizes.sort()
+        filterSize = sizes[int(0.1 * (len(sizes) - 1))]
         data_dir = os.path.dirname(args.test_boxes)
         image_dir = get_image_dir(args)
         subprocess.call('mkdir -p %s' % image_dir, shell=True)
         for i in range(len(true_annolist)):
             true_anno = true_annolist[i]
-            for i in range(len(true_anno.rects)):
-                rect = true_anno.rects[i]
+            j = 0
+            while j < len(true_anno.rects):
+                rect = true_anno.rects[j]
                 size = (rect.x2 - rect.x1) * (rect.y2 - rect.y1)
                 if size < filterSize:
-                    del true_anno.rects[i];
+                    del true_anno.rects[j]
+                else:
+                    j += 1
             orig_img = imread('%s/%s' % (data_dir, true_anno.imageName))[:,:,:3]
             img = imresize(orig_img, (H["image_height"], H["image_width"]), interp='cubic')
             feed = {x_in: img}
@@ -74,6 +78,8 @@ def get_results(args, H):
             new_img, rects = add_rectangles(H, [img], np_pred_confidences, np_pred_boxes,
                                             use_stitching=True, rnn_len=H['rnn_len'], min_conf=args.min_conf, tau=args.tau, show_suppressed=args.show_suppressed)
 
+            for r in true_anno.rects:
+                new_img=cv2.rectangle(new_img,(r.x1,r.y1),(r.x2, r.y2), (0,0,255), 2)
 
             #print(rects)
             for r in rects:
@@ -104,7 +110,7 @@ def main():
     parser.add_argument('--iou_threshold', default=0.5, type=float)
     parser.add_argument('--tau', default=0.25, type=float)
     parser.add_argument('--min_conf', default=0.2, type=float)
-    parser.add_argument('--show_suppressed', default=True, type=bool)
+    parser.add_argument('--show_suppressed', default=False, type=bool)
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
     hypes_file = 'hypes/%s' % args.weights.split("/")[1]+".json"
