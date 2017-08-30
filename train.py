@@ -3,6 +3,13 @@
 # python train.py --hypes hypes/overfeat_resnet_rezoom.json --gpu 0 --logdir output
 # Use environment cv3_py2 with python 2.7
 
+import sys
+import os
+
+# Add TensorBox to the python path
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../TensorBox"))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../prod"))
+
 import json
 import tensorflow.contrib.slim as slim
 import datetime
@@ -10,7 +17,6 @@ import random
 import time
 import string
 import argparse
-import os
 import threading
 from scipy import misc
 import tensorflow as tf
@@ -29,7 +35,7 @@ from tensorflow.python.ops import array_ops
 random.seed(0)
 np.random.seed(0)
 
-from .utils import train_utils, googlenet_load, tf_concat
+from utils import train_utils, googlenet_load, tf_concat
 
 @ops.RegisterGradient("Hungarian")
 def _hungarian_grad(op, *args):

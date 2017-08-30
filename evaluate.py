@@ -3,9 +3,14 @@
 # python evaluate.py --weights data/BoxCars/save.ckpt-40000 --test_boxes data/BoxCars/val_boxes.json
 # python evaluate.py --weights data/ownset/save.ckpt-40000 --test_boxes data/ownset/val_boxes.json
 
+import sys
+import os
+
+# Add TensorBox to the python path
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../TensorBox"))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../prod"))
 
 import tensorflow as tf
-import os
 import json
 import subprocess
 from scipy.misc import imread, imresize
@@ -57,7 +62,8 @@ def get_results(args, H):
             # TODO: try to fix order of x and y in add_rectangles?!
             new_img, rects = add_rectangles(H, [img], np_pred_confidences, np_pred_boxes,
                                             use_stitching=True, rnn_len=H['rnn_len'], min_conf=args.min_conf, tau=args.tau, show_suppressed=args.show_suppressed)
-
+            for r in true_anno.rects:
+                new_img=cv2.rectangle(new_img,(r.x1,r.y1),(r.x2, r.y2), (0,0,255), 2)
 
             #print(rects)
             for r in rects:
@@ -88,7 +94,7 @@ def main():
     parser.add_argument('--iou_threshold', default=0.5, type=float)
     parser.add_argument('--tau', default=0.25, type=float)
     parser.add_argument('--min_conf', default=0.2, type=float)
-    parser.add_argument('--show_suppressed', default=True, type=bool)
+    parser.add_argument('--show_suppressed', default=False, type=bool)
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
     hypes_file = 'hypes/%s' % args.weights.split("/")[1]+".json"
