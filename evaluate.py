@@ -52,9 +52,18 @@ def get_results(args, H):
         image_dir = get_image_dir(args)
         subprocess.call('mkdir -p %s' % image_dir, shell=True)
         for i in range(len(true_annolist)):
-            true_anno = true_annolist[i]
-            orig_img = imread('%s/%s' % (data_dir, true_anno.imageName))[:,:,:3]
+            true_anno1 = true_annolist[i]
+            orig_img = imread('%s/%s' % (data_dir, true_anno1.imageName))[:,:,:3]
             img = imresize(orig_img, (H["image_height"], H["image_width"]), interp='cubic')
+
+            true_anno = rescale_boxes((orig_img.shape[0], orig_img.shape[1]), true_anno1, H["image_height"],
+                                      H["image_width"])
+            for r in true_anno.rects:
+                r.x1, r.y1, r.x2, r.y2 = int(r.x1), int(r.y1), int(r.x2), int(r.y2)
+                new_img = cv2.rectangle(img, (r.x1, r.y1), (r.x2, r.y2), (255, 255, 255), 2)
+            imname = '%s/%s' % (image_dir + "_before", os.path.basename(true_anno.imageName))
+            misc.imsave(imname, new_img)
+
             feed = {x_in: img}
             (np_pred_boxes, np_pred_confidences) = sess.run([pred_boxes, pred_confidences], feed_dict=feed)
             pred_anno = al.Annotation()
@@ -72,7 +81,8 @@ def get_results(args, H):
                 if r.y1 > r.y2:
                     r.y1, r.y2 = r.y2, r.y1
                 #print("x1: %s - x2: %s - y1: %s - y2: %s"%(r.x1, r.x2, r.y1, r.y2))
-        
+
+            true_anno = true_anno1
             pred_anno.rects = rects
             pred_anno.imagePath = os.path.abspath(data_dir)
             pred_anno = rescale_boxes((H["image_height"], H["image_width"]), pred_anno, orig_img.shape[0], orig_img.shape[1])
