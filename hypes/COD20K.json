@@ -46,5 +46,8 @@
     "lstm_size": 500,
     "deconv": false,
     "num_classes": 2,
-    "rnn_len": 1
+    "rnn_len": 1,
+    "min_conf": 0.8,
+    "tau": 0.2,
+    "show_suppressed": false
 }

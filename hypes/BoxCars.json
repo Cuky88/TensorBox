@@ -31,10 +31,10 @@
     "early_feat_channels": 256,
     "later_feat_channels": 832,
     "avg_pool_size": 5,
-    "slim_top_lname": "resnet_v1_101/block4",
-    "slim_attention_lname": "resnet_v1_101/block1",
-    "slim_basename": "resnet_v1_101",
-    "slim_ckpt": "resnet_v1_101.ckpt",
+    "slim_top_lname": "Mixed_5b",
+    "slim_attention_lname": "Mixed_3b",
+    "slim_basename": "InceptionV1",
+    "slim_ckpt": "inception_v1.ckpt",
     "num_lstm_layers": 2,
     "image_width": 224,
     "image_height": 224,
@@ -46,5 +46,8 @@
     "lstm_size": 500,
     "deconv": false,
     "num_classes": 2,
-    "rnn_len": 1
+    "rnn_len": 1,
+    "min_conf": 0.8,
+    "tau": 0.2,
+    "show_suppressed": false
 }

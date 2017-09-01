@@ -7,7 +7,7 @@ from os.path import isfile, join
 import json
 import argparse
 import numpy as np
-import shutil
+from collections import OrderedDict
 
 def cod20k_read(path, file):
     with open(path+file, 'r') as reader:
@@ -45,6 +45,44 @@ def createJson(phase):
     with open('../data/COD20K/' + phase + '_boxes.json', 'w') as outfile:
         json.dump(total, outfile, indent=2)
         outfile.write('\n')
+
+def sort_img(json):
+    try:
+        return json['image_path']
+    except KeyError:
+        return 0
+
+def doSort():
+    dir = "../data/COD20K/"
+    train = 'train_boxes.json'
+    val = 'val_boxes.json'
+    test = 'test_boxes.json'
+
+    for i in [train, val, test]:
+        with open(dir + i, 'r') as reader:
+            read = json.load(reader)
+            read.sort(key=sort_img, reverse=False)
+
+            with open(dir + i.split('_')[0] + "_boxes_sorted.json", 'w') as outfile:
+                json.dump(read, outfile, indent=2)
+                outfile.write('\n')
+def cnt(file):
+    tmp = {}
+
+    with open(file, "rw") as reader:
+        read = json.load(reader)
+        read.sort(key=sort_img, reverse=False)
+        for img in read:
+            num = img["image_path"].split('/')[1].split('_')[0]
+            if num in tmp:
+                tmp[num] += 1
+            else:
+                tmp[num] = 1
+
+    print(len(tmp))
+    print(tmp)
+
+    startShowArr(tmp, file)
 
 def createVal():
     # Randomly select ~1000 images from train set and make ist the val set
@@ -96,10 +134,40 @@ def createVal():
         writer.write('\n')
     print(len(train_new))
 
+def startShow(show):
+    with open('../data/COD20K/test_boxes.json', 'r') as reader:
+        data = json.load(reader)
+        data.sort(key=sort_img, reverse=False)
+        for i, img in enumerate(data):
+            if i == show:
+                img_loaded = cv2.imread('../data/COD20K/' + img['image_path'])
+                print('../data/COD20K/' + img['image_path'])
+                showBB(img_loaded, img['rects'], img['image_path'])
+
+def startShowArr(arr, file):
+    a = OrderedDict(sorted(arr.items()))
+    cnt = 0
+
+    with open(file, 'r') as reader:
+        data = json.load(reader)
+        data.sort(key=sort_img, reverse=False)
+        for k, v in a.items():
+            print("Index: %d" % cnt)
+            for i, img in enumerate(data):
+                if i == cnt:
+                    img_loaded = cv2.imread('../data/COD20K/' + img['image_path'])
+                    print('../data/COD20K/' + img['image_path'])
+                    showBB(img_loaded, img['rects'], img['image_path'])
+            cnt += v
+
 def showBB(img, rects, name):
     for bb in rects:
         print(bb)
         img = cv2.rectangle(img, (bb['x1'], bb['y1']), (bb['x2'], bb['y2']), (255, 0, 0), 1)
+
+    fig = plt.gcf()
+    fig.canvas.set_window_title(name)
+    fig.set_size_inches( (fig.get_size_inches()[0]*3, fig.get_size_inches()[1]*3) )
 
     plt.imshow(img)
     plt.show()
@@ -122,7 +190,14 @@ def main():
     parser.add_argument('--phase', default=None, type=str)
     parser.add_argument('--show', default=None, type=int)
     parser.add_argument('--check', default=None, type=str)
+    parser.add_argument('--sort', default=None, type=int)
+    parser.add_argument('--cnt', default=None, type=str)
     args = parser.parse_args()
+
+    if args.sort is not None:
+        doSort()
+    if args.cnt is not None:
+        cnt(args.cnt)
 
     if args.phase is not None and not 'val':
         createJson(args.phase)
@@ -132,13 +207,7 @@ def main():
         checkAnno(args.check)
 
     if args.show is not None:
-        with open('../data/COD20K/test_boxes.json', 'r') as reader:
-            data = json.load(reader)
-            for i, img in enumerate(data):
-                if i == args.show:
-                    img_loaded = cv2.imread('../data/COD20K/' + img['image_path'])
-                    print('../data/COD20K/' + img['image_path'])
-                    showBB(img_loaded, img['rects'], img['image_path'])
+        startShow(args.show)
 
 
 if __name__ == '__main__':
