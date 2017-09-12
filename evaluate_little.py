@@ -73,11 +73,11 @@ def get_results(args, H):
 
             true_anno = rescale_boxes((orig_img.shape[0], orig_img.shape[1]), true_anno1, H["image_height"],
                                       H["image_width"])
-            for r in true_anno.rects:
-                r.x1, r.y1, r.x2, r.y2 = int(r.x1), int(r.y1), int(r.x2), int(r.y2)
-                new_img = cv2.rectangle(img, (r.x1, r.y1), (r.x2, r.y2), (255, 255, 255), 2)
-            imname = '%s/%s' % (image_dir + "_before", os.path.basename(true_anno.imageName))
-            misc.imsave(imname, new_img)
+            #for r in true_anno.rects:
+            #    r.x1, r.y1, r.x2, r.y2 = int(r.x1), int(r.y1), int(r.x2), int(r.y2)
+            #    new_img = cv2.rectangle(img, (r.x1, r.y1), (r.x2, r.y2), (255, 255, 255), 2)
+            #imname = '%s/%s' % (image_dir + "_before", os.path.basename(true_anno.imageName))
+            #misc.imsave(imname, new_img)
 
             feed = {x_in: img}
             (np_pred_boxes, np_pred_confidences) = sess.run([pred_boxes, pred_confidences], feed_dict=feed)

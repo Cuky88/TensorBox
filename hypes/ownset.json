@@ -26,7 +26,7 @@
     "rezoom_change_loss": "iou",
     "rezoom_w_coords": [-0.25, 0.25],
     "rezoom_h_coords": [-0.25, 0.25],
-    "reregress": true,
+    "reregress": false,
     "focus_size": 1.8,
     "early_feat_channels": 256,
     "later_feat_channels": 832,

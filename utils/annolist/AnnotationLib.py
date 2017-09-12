@@ -11,7 +11,7 @@ import numpy as np;
 from collections import MutableSequence
 
 #import AnnoList_pb2
-from PalLib import *
+#from .PalLib import *
 
 import xml.dom.minidom
 from xml.dom.minidom import Node
@@ -180,14 +180,14 @@ class AnnoPoint(object):
         self.id = id;
 
 class AnnoRect(object):
-    def __init__(self, x1=-1, y1=-1, x2=-1, y2=-1):
+    def __init__(self, x1=-1, y1=-1, x2=-1, y2=-1, score=-1):
 
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
 
-        self.score = -1.0
+        self.score = score
         self.scale = -1.0
         self.articulations =[]
         self.viewpoints =[]

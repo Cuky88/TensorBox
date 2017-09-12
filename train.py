@@ -14,6 +14,8 @@ import json
 import tensorflow.contrib.slim as slim
 import datetime
 import random
+import cv2
+import matplotlib.pyplot as plt
 import time
 import string
 import argparse
@@ -472,7 +474,28 @@ def train(H, test_images):
         for phase in ['train', 'test']:
             # enqueue once manually to avoid thread start delay
             gen = train_utils.load_data_gen(H, phase, jitter=H['solver']['use_jitter'])
-            d = next(gen)
+            d = next(gen) # Output: {"image": I, "boxes": boxes, "flags": flags}
+
+            # Print images with bounding boxes when training, for debug
+            #print(d["boxes"][0]) # == r
+            #print(d["boxes"][0][0]) # == z
+            #print(d["boxes"][0][0][0])
+
+            # for r in d["boxes"]:
+            #     for z in r:
+            #         if z[0] == 0 or z[1] == 0 or z[2] == 0 or z[3] == 0:
+            #             pass
+            #         else:
+            #             print(z)
+            #             I = cv2.rectangle(d["image"], (int(z[0]), int(z[1])), (int(z[0])+int(z[2]), int(z[1])+int(z[3])), (0, 0, 255), 2)
+            #
+            #             fig = plt.gcf()
+            #             fig.canvas.set_window_title(d["image"])
+            #             fig.set_size_inches((fig.get_size_inches()[0] * 3, fig.get_size_inches()[1] * 3))
+            #
+            #             plt.imshow(I)
+            #             plt.show()
+
             sess.run(enqueue_op[phase], feed_dict=make_feed(d))
             t = threading.Thread(target=thread_loop,
                                  args=(sess, enqueue_op, phase, gen))

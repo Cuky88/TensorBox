@@ -32,9 +32,14 @@ def load_idl_tf(idlfile, H, jitter):
 
     annolist = al.parse(idlfile)
     annos = []
+    i = 1
     for anno in annolist:
         #if anno.imageName =="train/00067_8040.jpg":
             #print(anno)
+        if i==0:
+            for r in anno.rects:
+                print(r.x1, r.y1, r.x2, r.y2)
+            i =1
 
         anno.imageName = os.path.join(
             os.path.dirname(os.path.realpath(idlfile)), anno.imageName)
@@ -47,6 +52,19 @@ def load_idl_tf(idlfile, H, jitter):
         random.shuffle(annos)
         for anno in annos:
             I = imread(anno.imageName)
+
+            # Print image with boxes before further processing
+            if i == 0:
+                for r in anno.rects:
+                    I = cv2.rectangle(I, (r.x1, r.y1),(r.x2, r.y2), (0, 0, 255), 2)
+
+                fig = plt.gcf()
+                fig.canvas.set_window_title(anno.imageName)
+                fig.set_size_inches((fig.get_size_inches()[0] * 3, fig.get_size_inches()[1] * 3))
+
+                plt.imshow(I)
+                plt.show()
+
 	    #Skip Greyscale images
             if len(I.shape) < 3:
                 continue
@@ -69,8 +87,8 @@ def load_idl_tf(idlfile, H, jitter):
 
             boxes, flags = annotation_to_h5(H,
                                             anno,
-                                            H["grid_width"],
-                                            H["grid_height"],
+                                                H["grid_width"],
+                                                H["grid_height"],
                                             H["rnn_len"])
 
             yield {"image": I, "boxes": boxes, "flags": flags}

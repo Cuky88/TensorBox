@@ -9,7 +9,7 @@
         "save_iter": 10000
     },
     "solver": {
-        "opt": "RMS",
+        "opt": "Adam",
         "use_jitter": false,
         "rnd_seed": 1,
         "epsilon": 0.00001, 
@@ -23,7 +23,7 @@
     "use_lstm": false,
     "use_rezoom": true,
     "biggest_box_px": 10000,
-    "rezoom_change_loss": "iou",
+    "rezoom_change_loss": "center",
     "rezoom_w_coords": [-0.25, 0.25],
     "rezoom_h_coords": [-0.25, 0.25],
     "reregress": true,
